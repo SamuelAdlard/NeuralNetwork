@@ -15,9 +15,9 @@ class Neuron:
         self.bias = bias
         
     def feedforward(self, inputs):
-        total = np.dot(self.weights, inputs) + self.bias
+        self.total = np.dot(self.weights, inputs) + self.bias
         
-        self.value = Sigmoid(total)
+        self.value = Sigmoid(self.total)
         return self.value
 
 class Layer:
@@ -69,7 +69,21 @@ def TrainNetwork(network):
                 print(weight)
         index = index + 1
 
+def FindDerivativeRTW(network, layerIndex, neuron, inputs, weightIndex):
+    
+    if layerIndex > 0:
+        return deriv_sigmoid(neuron.total) * network.layers[layerIndex - 1].neurons[weightIndex].value
+    else:
+        return deriv_sigmoid(neuron.total) * inputs[weightIndex]
+    
+def FindDerivativeRTN(neuron, neuronIndex):
+    
+    return deriv_sigmoid(neuron.total) * neuron.weights[neuronIndex]
+    
 
+
+
+    
 
 
 
