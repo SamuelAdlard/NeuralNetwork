@@ -31,7 +31,7 @@ class Layer:
     def GenerateWeights(self, numInputs):
         weights = []
         for i in range(0, numInputs):
-            weights.append(np.random.normal())
+            weights.append(1)
 
         return np.array(weights)
 
@@ -47,7 +47,7 @@ class Network:
         for i in range(1, len(self.layers)):
             self.feedforwardNeurons(i, np.array(self.layers[i - 1].values))
         
-        print(self.layers[1].neurons[0].value)
+        return self.layers[1].neurons[0].value
 
 
     def feedforwardNeurons(self, layerIndex, inputs):
@@ -58,7 +58,8 @@ class Network:
 def MSE_loss(y_true, y_pred):
     return ((y_true - y_pred) ** 2).mean()
 
-
+def deriv_MSE_loss(y_true, y_pred):
+    return -2*(y_true- y_pred)
 
 def TrainNetwork(network):
     index = 0
@@ -69,12 +70,24 @@ def TrainNetwork(network):
                 print(weight)
         index = index + 1
 
+def FindAverageDerivative(layer, neuron, neuronIndex):
+    derivative = []
+    for neuron in layer.neurons:
+        derivative.append(FindDerivativeRTN(neuron, neuronIndex))
+        
+    return np.array(derivative).mean()
+
 def FindDerivativeRTW(network, layerIndex, neuron, inputs, weightIndex):
     
     if layerIndex > 0:
+        
         return deriv_sigmoid(neuron.total) * network.layers[layerIndex - 1].neurons[weightIndex].value
+        
     else:
+        print("I =" + str(inputs[weightIndex]))
+        print("f(" + str(neuron.total) + ")")
         return deriv_sigmoid(neuron.total) * inputs[weightIndex]
+    
     
 def FindDerivativeRTN(neuron, neuronIndex):
     
@@ -90,10 +103,9 @@ def FindDerivativeRTN(neuron, neuronIndex):
 network = Network()
 inputs = np.array([0,1])
 
-network.feedforward(inputs)
+print("Output: " + str(network.feedforward(inputs)))
 
-
-TrainNetwork(network)
+#TrainNetwork(network)
 
 
 
