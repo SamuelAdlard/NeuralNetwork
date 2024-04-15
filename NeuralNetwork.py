@@ -70,33 +70,38 @@ def TrainNetwork(network):
                 print(weight)
         index = index + 1
 
-def FindAverageDerivative(layer, neuron, neuronIndex):
+
+#Average derivative of a layer with respect to one neuron (layer is the layer you're differentiating, and neuronIndex is the thing you're differentiating with respect to)
+def FindAverageDerivative(layer, neuronIndex):
     derivative = []
     for neuron in layer.neurons:
         derivative.append(FindDerivativeRTN(neuron, neuronIndex))
         
     return np.array(derivative).mean()
 
+#Respect to weight
 def FindDerivativeRTW(network, layerIndex, neuron, inputs, weightIndex):
     
     if layerIndex > 0:
         
         return deriv_sigmoid(neuron.total) * network.layers[layerIndex - 1].neurons[weightIndex].value
-        
     else:
-        print("I =" + str(inputs[weightIndex]))
-        print("f(" + str(neuron.total) + ")")
         return deriv_sigmoid(neuron.total) * inputs[weightIndex]
     
-    
+#Respect to bias
+def FindDerivativeRTB(neuron):
+    return deriv_sigmoid(neuron.total)
+
+
+#Respect to another neuron (neuron is the neuron you're differentiating, neuronIndex is the neuron you're  differentiating with respect to)
 def FindDerivativeRTN(neuron, neuronIndex):
-    
     return deriv_sigmoid(neuron.total) * neuron.weights[neuronIndex]
     
 
 
 
     
+
 
 
 
