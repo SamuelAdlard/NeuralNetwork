@@ -63,21 +63,35 @@ def deriv_MSE_loss(y_true, y_pred):
 
 def TrainNetwork(network):
     index = 0
+    previousLayer = 0
     for layer in reversed(network.layers):
-        #print(layer.values)
-        for neuron in layer.neurons:
-            for weight in neuron.weights:
-                print(weight)
+
+        if(index == 0):
+            layer.neurons[0].derivLoss = deriv_MSE_loss(1, layer.neurons[0].value)
+            print("DerivRLT: " + str(layer.neurons[0].derivLoss))
+        else:
+            for neuronIndex in range(0, len(layer.neurons)):
+                layer.neurons[neuronIndex].derivLoss = FindAverageDerivative(previousLayer, neuronIndex)
+                derivLoss = layer.neurons[neuronIndex].derivLoss
+                print("Layer: {}; Neuron: {}; DerivLoss: {}".format(index, neuronIndex, derivLoss))
+                trueIndex = len(network.layers) - (index + 1)
+                for weight in range(0, len(layer.neurons[neuronIndex].weights)):
+                    print("Weight: {}, DerivLoss: {}".format(weight, derivLoss * FindDerivativeRTW(network, trueIndex, layer.neurons[neuronIndex], inputs, weight)))
+
         index = index + 1
+        previousLayer = layer
+        
+            
 
 
 #Average derivative of a layer with respect to one neuron (layer is the layer you're differentiating, and neuronIndex is the thing you're differentiating with respect to)
 def FindAverageDerivative(layer, neuronIndex):
-    derivative = []
+    
+    derivativesLoss = []
     for neuron in layer.neurons:
-        derivative.append(FindDerivativeRTN(neuron, neuronIndex))
-        
-    return np.array(derivative).mean()
+        derivativeRTN = FindDerivativeRTN(neuron, neuronIndex)
+        derivativesLoss.append(derivativeRTN * neuron.derivLoss)
+    return np.array(derivativesLoss).mean()
 
 #Respect to weight
 def FindDerivativeRTW(network, layerIndex, neuron, inputs, weightIndex):
@@ -91,6 +105,9 @@ def FindDerivativeRTW(network, layerIndex, neuron, inputs, weightIndex):
 #Respect to bias
 def FindDerivativeRTB(neuron):
     return deriv_sigmoid(neuron.total)
+
+
+    
 
 
 #Respect to another neuron (neuron is the neuron you're differentiating, neuronIndex is the neuron you're  differentiating with respect to)
@@ -107,9 +124,9 @@ def FindDerivativeRTN(neuron, neuronIndex):
 
 network = Network()
 inputs = np.array([0,1])
-
-print("Output: " + str(network.feedforward(inputs)))
-
+output = network.feedforward(inputs)
+print("Output: " + str(output))
+TrainNetwork(network)
 #TrainNetwork(network)
 
 
