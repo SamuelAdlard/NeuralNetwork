@@ -8,7 +8,7 @@ dog_weight_range = (8.0, 30.0)  # in kilograms
 dog_height_range = (45, 75)     # in centimeters
 
 # Generate the dataset
-num_entries = 2000  # total number of entries
+num_entries = 20  # total number of entries
 data = []
 
 for _ in range(num_entries // 2):
